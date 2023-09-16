@@ -5,6 +5,9 @@
 
 mastoid is a command line tool for downloading and rendering Mastodon threads. It allows you to easily archive threads for your notes or share them in a variety of formats.
 
+![image](https://github.com/go-go-golems/mastoid/assets/128441/68e64a9b-b924-4c37-99c8-519fd735259c)
+
+
 ## Features
 
 - Download a thread as structured data in JSON, CSV, etc using `mastoid thread`
