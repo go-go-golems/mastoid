@@ -29,7 +29,7 @@ changelog:
 brews:
   - name: mastoid
     description: "mastoid is a tool"
-    homepage: "https://github.com/go-go-golems/XXX"
+    homepage: "https://github.com/go-go-golems/mastoid"
     tap:
       owner: go-go-golems
       name: homebrew-go-go-go
@@ -44,7 +44,7 @@ nfpms:
     maintainer: Manuel Odendahl <wesen@ruinwesen.com>
 
     description: |-
-      XXX is a tool
+      mastoid is a tool
 
     license: MIT
 

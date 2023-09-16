@@ -8,7 +8,7 @@ import (
 )
 
 var AuthorizeCmd = &cobra.Command{
-	Use:   "Authorize",
+	Use:   "authorize",
 	Short: "Authorize the app with the Mastodon instance",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		credentials, err := pkg.LoadCredentials()
