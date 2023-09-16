@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/mattn/go-mastodon"
 	"github.com/pkg/browser"
+	"github.com/rs/zerolog/log"
 	"github.com/yardbirdsax/bubblewrap"
 )
 
@@ -26,7 +27,7 @@ func Authorize(ctx context.Context, credentials_ *Credentials) error {
 		}
 
 		credentials_.GrantToken = grantToken
-		fmt.Printf("Grant Token: %s\n", credentials_.GrantToken)
+		log.Debug().Str("GrantToken", credentials_.GrantToken).Msg("Grant Token")
 
 		client := mastodon.NewClient(&mastodon.Config{
 			Server:       credentials_.Server,
@@ -57,8 +58,13 @@ func Authorize(ctx context.Context, credentials_ *Credentials) error {
 			continue
 		}
 
-		fmt.Printf("Website: %s\n", credentials.Website)
-		fmt.Printf("Name: %s\n", credentials.Name)
+		if credentials.Website != "" {
+			log.Info().Str("Website", credentials.Website).Msg("Website")
+		}
+		if credentials.Name != "" {
+			log.Info().Str("Name", credentials.Name).Msg("Name")
+		}
+
 		isCodeValid = true
 	}
 

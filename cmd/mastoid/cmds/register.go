@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-go-golems/mastoid/cmd/mastoid/pkg"
 	"github.com/mattn/go-mastodon"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -27,8 +28,10 @@ var RegisterCmd = &cobra.Command{
 			Server:       server,
 		}
 
+		log.Info().Msg("Registering app...")
 		app, err := mastodon.RegisterApp(ctx, appConfig)
 		if err != nil {
+			log.Error().Err(err).Msgf("Error registering app")
 			return fmt.Errorf("Error registering app: %w", err)
 		}
 
@@ -37,14 +40,17 @@ var RegisterCmd = &cobra.Command{
 			Application: app,
 		}
 
-		fmt.Printf("App registration successful!\n")
-		fmt.Printf("Client ID: %s\n", app.ClientID)
-		fmt.Printf("Client Secret: %s\n", app.ClientSecret)
-		fmt.Printf("Auth URI: %s\n", app.AuthURI)
-		fmt.Printf("Redirect URI: %s\n", app.RedirectURI)
+		log.Info().Msg("App registration successful!\n")
+		log.Debug().Str("ClientID", app.ClientID).Msgf("Client ID")
+		log.Debug().Str("ClientSecret", app.ClientSecret).Msgf("Client Secret")
+		log.Debug().Str("AuthURI", app.AuthURI).Msgf("Auth URI")
+		log.Debug().Str("RedirectURI", app.RedirectURI).Msgf("Redirect URI")
+
+		log.Info().Msg("Authorizing app...")
 
 		err = pkg.Authorize(ctx, credentials)
 		if err != nil {
+			log.Error().Err(err).Msgf("Error authorizing app")
 			return fmt.Errorf("Error authorizing app: %w", err)
 		}
 
@@ -53,8 +59,10 @@ var RegisterCmd = &cobra.Command{
 			return fmt.Errorf("Error storing credentials: %w", err)
 		}
 
-		fmt.Printf("Grant Token: %s\n", credentials.GrantToken)
-		fmt.Printf("Access Token: %s\n", credentials.AccessToken)
+		log.Debug().Str("GrantToken", credentials.GrantToken).Msgf("Grant Token")
+		log.Debug().Str("AccessToken", credentials.AccessToken).Msgf("Access Token")
+
+		log.Info().Msg("App authorization successful!")
 
 		return nil
 	},

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-go-golems/mastoid/cmd/mastoid/pkg"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +18,7 @@ var VerifyCmd = &cobra.Command{
 		cobra.CheckErr(err)
 
 		if credentials.Application.ClientID == "" || credentials.Application.ClientSecret == "" {
-			fmt.Println("No client ID or secret found")
+			log.Error().Msg("No client ID or secret found")
 			return
 		}
 
@@ -27,25 +28,27 @@ var VerifyCmd = &cobra.Command{
 		if client.Config.AccessToken == "" {
 			fmt.Println("No access token found")
 			if credentials.GrantToken != "" {
-				fmt.Println("Authenticating with grant token")
+				log.Info().Msg("Authenticating with grant token")
 				err = client.AuthenticateToken(ctx, credentials.GrantToken, credentials.Application.RedirectURI)
 				cobra.CheckErr(err)
 
-				fmt.Println("Grant token authenticated")
+				log.Info().Msg("Grant token authenticated")
 			} else {
-				fmt.Println("Authenticating with app")
+				log.Info().Msg("Authenticating with app")
 				err = client.AuthenticateApp(ctx)
 				cobra.CheckErr(err)
-				fmt.Println("App authenticated")
+				log.Info().Msg("App authenticated")
 			}
 		} else {
-			fmt.Printf("Access token found: %s\n", client.Config.AccessToken)
+			log.Info().Str("AccessToken", client.Config.AccessToken).Msg("Access token found")
 		}
 
 		app, err := client.VerifyAppCredentials(ctx)
 		cobra.CheckErr(err)
 
-		fmt.Printf("App Name: %s\n", app.Name)
-		fmt.Printf("App Website: %s\n", app.Website)
+		log.Info().Str("AppName", app.Name).Msg("App Name")
+		if app.Website != "" {
+			log.Info().Str("AppWebsite", app.Website).Msg("App Website")
+		}
 	},
 }
