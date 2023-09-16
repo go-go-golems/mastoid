@@ -127,6 +127,8 @@ Instead of structured data, you can render the thread in a more readable format 
 In Markdown, the thread structure is shown using nested blockquotes:
 
 ```
+❯ mastoid render -s https://hachyderm.io/@mnl/111039612582661457
+
 > Author: mnl (2023-09-10 07:13:45.988 +0000 UTC)
 > URL: https://hachyderm.io/@mnl/111039612582661457
 > Author URL: https://hachyderm.io/@mnl
@@ -173,6 +175,8 @@ In Markdown, the thread structure is shown using nested blockquotes:
 The text output shows the thread structure using nested indentation:
 
 ```
+❯ mastoid render -s https://hachyderm.io/@mnl/111039612582661457 --output text
+
 + Author: mnl (2023-09-10 07:13:45.988 +0000 UTC)
 | URL: https://hachyderm.io/@mnl/111039612582661457
 | Author URL: https://hachyderm.io/@mnl
