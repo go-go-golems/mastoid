@@ -42,20 +42,31 @@ func NewThreadCommand() (*ThreadCmd, error) {
 					parameters.WithDefault(false),
 				),
 			),
-			cmds.WithLayers(glazedParameterLayer),
+			cmds.WithLayersList(glazedParameterLayer),
 		),
 	}, nil
 }
 
-func (c *ThreadCmd) Run(
+type ThreadSettings struct {
+	Status  string `glazed.parameter:"status"`
+	Verbose bool   `glazed.parameter:"verbose"`
+}
+
+var _ cmds.GlazeCommand = (*ThreadCmd)(nil)
+
+func (c *ThreadCmd) RunIntoGlazeProcessor(
 	ctx context.Context,
-	parsedLayers map[string]*layers.ParsedParameterLayer,
-	ps map[string]interface{},
+	parsedLayers *layers.ParsedLayers,
 	gp middlewares.Processor,
 ) error {
-	status := ps["status"].(string)
+	s := &ThreadSettings{}
 
-	statusID := pkg.ExtractID(status)
+	err := parsedLayers.InitializeStruct(layers.DefaultSlug, s)
+	if err != nil {
+		return err
+	}
+
+	statusID := pkg.ExtractID(s.Status)
 	if statusID == "" {
 		return errors.New("no status ID provided")
 	}
@@ -75,7 +86,7 @@ func (c *ThreadCmd) Run(
 		return err
 	}
 
-	context, err := client.GetStatusContext(ctx, status_.ID)
+	context_, err := client.GetStatusContext(ctx, status_.ID)
 	if err != nil {
 		return err
 	}
@@ -85,13 +96,11 @@ func (c *ThreadCmd) Run(
 	}
 
 	thread.AddStatus(status_)
-	thread.AddContextAndGetMissingIDs(status_.ID, context)
-
-	verbose := ps["verbose"].(bool)
+	thread.AddContextAndGetMissingIDs(status_.ID, context_)
 
 	printNode := func(node *pkg.Node, depth int, siblingIdx int) error {
 		var row types.Row
-		if verbose {
+		if s.Verbose {
 			row = types.NewRowFromStruct(node.Status, true)
 		} else {
 			row = types.NewRow(
