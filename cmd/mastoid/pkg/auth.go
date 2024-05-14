@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/mattn/go-mastodon"
 	"github.com/pkg/browser"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/yardbirdsax/bubblewrap"
 )
@@ -13,7 +14,7 @@ func Authorize(ctx context.Context, credentials_ *Credentials) error {
 	// open app.AuthURI in browser
 	err := browser.OpenURL(credentials_.Application.AuthURI)
 	if err != nil {
-		return fmt.Errorf("Error opening browser: %w", err)
+		return errors.Wrap(err, "Error opening browser")
 	}
 
 	isCodeValid := false
@@ -23,7 +24,7 @@ func Authorize(ctx context.Context, credentials_ *Credentials) error {
 	for !isCodeValid {
 		grantToken, err = bubblewrap.Input("Enter the code from the browser: ")
 		if err != nil {
-			return fmt.Errorf("Error reading user input: %w", err)
+			return errors.Wrap(err, "Error reading user input")
 		}
 
 		credentials_.GrantToken = grantToken

@@ -2,9 +2,9 @@ package cmds
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-go-golems/mastoid/cmd/mastoid/pkg"
 	"github.com/mattn/go-mastodon"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -32,7 +32,7 @@ var RegisterCmd = &cobra.Command{
 		app, err := mastodon.RegisterApp(ctx, appConfig)
 		if err != nil {
 			log.Error().Err(err).Msgf("Error registering app")
-			return fmt.Errorf("Error registering app: %w", err)
+			return errors.Wrap(err, "Error registering app")
 		}
 
 		credentials := &pkg.Credentials{
@@ -51,12 +51,12 @@ var RegisterCmd = &cobra.Command{
 		err = pkg.Authorize(ctx, credentials)
 		if err != nil {
 			log.Error().Err(err).Msgf("Error authorizing app")
-			return fmt.Errorf("Error authorizing app: %w", err)
+			return errors.Wrap(err, "Error authorizing app")
 		}
 
 		err = pkg.StoreCredentials(credentials)
 		if err != nil {
-			return fmt.Errorf("Error storing credentials: %w", err)
+			return errors.Wrap(err, "Error storing credentials")
 		}
 
 		log.Debug().Str("GrantToken", credentials.GrantToken).Msgf("Grant Token")

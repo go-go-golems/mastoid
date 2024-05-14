@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"path/filepath"
 
@@ -29,12 +29,12 @@ func StoreCredentials(credentials *Credentials) error {
 		// config file not found, create it
 		err = viper.SafeWriteConfig()
 		if err != nil {
-			return fmt.Errorf("Error writing config: %w", err)
+			return errors.Wrap(err, "Error writing config")
 		}
 		return nil
 	}
 	if err != nil {
-		return fmt.Errorf("Error writing config: %w", err)
+		return errors.Wrap(err, "Error writing config")
 	}
 	return nil
 }
@@ -50,7 +50,7 @@ func LoadCredentials() (*Credentials, error) {
 
 	// check that they are valid
 	if clientId == "" || clientSecret == "" {
-		return nil, fmt.Errorf("no credentials found")
+		return nil, errors.Errorf("no credentials found")
 	}
 
 	app := &Credentials{

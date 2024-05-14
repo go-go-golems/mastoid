@@ -2,8 +2,8 @@ package cmds
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-go-golems/mastoid/cmd/mastoid/pkg"
+	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -14,21 +14,21 @@ var AuthorizeCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		credentials, err := pkg.LoadCredentials()
 		if err != nil {
-			return fmt.Errorf("Error loading credentials: %w", err)
+			return errors.Wrap(err, "Error loading credentials")
 		}
 
 		log.Info().Msg("Authorizing app...")
 		err = pkg.Authorize(context.Background(), credentials)
 		if err != nil {
 			log.Error().Err(err).Msgf("Error authorizing app")
-			return fmt.Errorf("Error authorizing app: %w", err)
+			return errors.Wrap(err, "Error authorizing app")
 		}
 
 		log.Info().Msg("App authorization successful!\n")
 
 		err = pkg.StoreCredentials(credentials)
 		if err != nil {
-			return fmt.Errorf("Error storing credentials: %w", err)
+			return errors.Wrap(err, "Error storing credentials")
 		}
 		log.Debug().Str("GrantToken", credentials.GrantToken).Msgf("Grant Token")
 		log.Debug().Str("AccessToken", credentials.AccessToken).Msgf("Access Token")
